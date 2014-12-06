@@ -15,6 +15,13 @@ Send a private message
 :   :message => "cooooo, coo coo"
 : )
 
+Send multiple private messages
+
+: CarrierPigeon.send(
+:   :uri => "irc://nick:password@irc.domain.com:6667/#channel",
+:   :message => ["coooooo", "coo", "coo"]
+: )
+
 Send a notice
 
 : CarrierPigeon.send(

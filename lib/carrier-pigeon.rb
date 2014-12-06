@@ -63,7 +63,9 @@ class CarrierPigeon
         "PRIVMSG NICKSERV :IDENTIFY #{options[:nickserv_password]}"
     end
     pigeon = new(options)
-    pigeon.message(options[:channel], options[:message], options[:notice])
+    [options[:message]].flatten.each do |message|
+      pigeon.message(options[:channel], message, options[:notice])
+    end
     pigeon.die
   end
 

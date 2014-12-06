@@ -11,6 +11,14 @@ PRIVMSG #test :test
 QUIT :quit
 EXPECTED
 
+MULTIPLE_MESSAGES = <<"EXPECTED"
+NICK foo
+USER foo 0 * :foo
+PRIVMSG #test :test
+PRIVMSG #test :test
+QUIT :quit
+EXPECTED
+
 NOTICE = <<"EXPECTED"
 NICK foo
 USER foo 0 * :foo
@@ -53,7 +61,7 @@ EXPECTED
 describe CarrierPigeon do
   before do
     @server_received = ""
-    @tcp_server = TCPServer.new(16667)
+    @tcp_server = TCPServer.new('0.0.0.0', 16667)
     Thread.new do
       socket = @tcp_server.accept
       server_messages.each { |msg| socket.puts msg }
@@ -66,7 +74,6 @@ describe CarrierPigeon do
 
   after do
     @tcp_server.close
-    sleep 1
   end
 
   describe "with server reply" do
@@ -85,6 +92,14 @@ describe CarrierPigeon do
         :message => "test"
       )
       @server_received.must_equal(PRIVATE_MESSAGE)
+    end
+
+    it "can send multiple private messages to an irc channel" do
+      CarrierPigeon.send(
+        :uri => "irc://foo@localhost:16667/#test",
+        :message => ["test", "test"]
+      )
+      @server_received.must_equal(MULTIPLE_MESSAGES)
     end
 
     it "can send a notice to an irc channel" do
